@@ -1,200 +1,110 @@
-#include <stdio.h>
-int main(void) {
-    int choice;
-
-    do {
-        printf("\n===== LIBRARY MENU =====\n");
-        printf("1. Issue a book\n");
-        printf("2. Return a book\n");
-        printf("3. Display issued books\n");
-        printf("4. Exit\n");
-        printf("Enter your choice: ");
-        scanf("%d", &choice);
-
-        switch (choice) {
-            case 1:
-                printf("You chose ISSUE. (not built yet)\n");
-                break;
-            case 2:
-                printf("You chose RETURN. (not built yet)\n");
-                break;
-            case 3:
-                printf("You chose DISPLAY. (not built yet)\n");
-                break;
-            case 4:
-                printf("Goodbye!\n");
-                break;
-            default:
-                printf("Wrong choice! Type 1 to 4.\n");
-        }
-
-    } while (choice != 4);
-
-    return 0;
-}
-#include <stdio.h>
-#define MAX_BOOKS 1000
-
-/* The blueprint for ONE borrowed book */
 struct IssuedBook {
+    int  bookId;             /* matches Member 1's book id   */
     char bookName[50];
+    int  memberId;           /* matches Member 2's member id */
     char studentName[50];
-    char issueDate[15];
+    char issueDate[15];      /* dd-mm-yyyy */
 };
-
-/* The actual storage: 1000 empty rows, and a counter */
-struct IssuedBook issuedBooks[MAX_BOOKS];
+ 
+struct IssuedBook issuedBooks[MAX_ISSUED];
 int totalIssued = 0;
-
-int main(void) {
-    int choice;
-
-    do {
-        printf("\n===== LIBRARY MENU =====\n");
-        printf("1. Issue a book\n");
-        printf("2. Return a book\n");
-        printf("3. Display issued books\n");
-        printf("4. Exit\n");
-        printf("Enter your choice: ");
-        scanf("%d", &choice);
-
-        switch (choice) {
-            case 1:
-                printf("Issue is not built yet.\n");
-                break;
-            case 2:
-                printf("Return is not built yet.\n");
-                break;
-            // case 2:
-            //    returnBook();
-            //     break;
-            case 3:
-                /* Proof that our counter exists! */
-                printf("Books currently issued: %d\n", totalIssued);
-                break;
-            case 4:
-                printf("Goodbye!\n");
-                break;
-            default:
-                printf("Wrong choice! Type 1 to 4.\n");
-        }
-
-    } while (choice != 4);
-
-    return 0;
-}
-// Issue and Display now really work.
-
-#include <stdio.h>
-#include <string.h>
-
-#define MAX_BOOKS 1000
-
-struct IssuedBook {
-    char bookName[50];
-    char studentName[50];
-    char issueDate[15];
-};
-
-struct IssuedBook issuedBooks[MAX_BOOKS];
-int totalIssued = 0;
-
-/* Write one new row into the array */
+ 
+ 
+/* ---------- Issue a book ---------- */
+ 
 void issueBook(void) {
-    if (totalIssued >= MAX_BOOKS) {
-        printf("The record is full!\n");
+ 
+    if (totalIssued >= MAX_ISSUED) {
+        printf("\nThe issue record is full. Cannot issue more books.\n");
         return;
     }
-
+ 
     printf("\n--- Issue a Book ---\n");
-
-    printf("Enter book name: ");
-    scanf("%s", issuedBooks[totalIssued].bookName);
-
+ 
+    printf("Enter book ID     : ");
+    scanf("%d", &issuedBooks[totalIssued].bookId);
+ 
+    printf("Enter book name   : ");
+    scanf("%49s", issuedBooks[totalIssued].bookName);
+ 
+    printf("Enter member ID   : ");
+    scanf("%d", &issuedBooks[totalIssued].memberId);
+ 
     printf("Enter student name: ");
-    scanf("%s", issuedBooks[totalIssued].studentName);
-
-    printf("Enter issue date: ");
-    scanf("%s", issuedBooks[totalIssued].issueDate);
-
-    printf("Success! Book issued.\n");
-
-    totalIssued++;   /* move to the next empty row */
+    scanf("%49s", issuedBooks[totalIssued].studentName);
+ 
+    printf("Enter issue date  : ");
+    scanf("%14s", issuedBooks[totalIssued].issueDate);
+ 
+    totalIssued++;
+ 
+    printf("Done. Book issued successfully.\n");
 }
-
-/* Print every filled row */
-void displayIssuedBooks(void) {
-    int i;
-
-    if (totalIssued == 0) {
-        printf("\nNo books are currently issued.\n");
-        return;
-    }
-
-    printf("\n--- Currently Issued Books ---\n");
-    for (i = 0; i < totalIssued; i++) {
-        printf("%d. %s | %s | %s\n",
-               i + 1,
-               issuedBooks[i].bookName,
-               issuedBooks[i].studentName,
-               issuedBooks[i].issueDate);
-    }
-    printf("Total: %d\n", totalIssued);
-}
+ 
+ 
+/* ---------- Return a book ---------- */
+ 
 void returnBook(void) {
-    int i, found = 0;
     char bookName[50];
-
+    int i, j;
+    int found = 0;
+ 
     if (totalIssued == 0) {
-        printf("\nNo books are currently issued.\n");
+        printf("\nNo books are issued right now.\n");
         return;
     }
-
+ 
     printf("\n--- Return a Book ---\n");
     printf("Enter book name to return: ");
-    scanf("%s", bookName);
-
+    scanf("%49s", bookName);
+ 
     for (i = 0; i < totalIssued; i++) {
+ 
         if (strcmp(bookName, issuedBooks[i].bookName) == 0) {
-
-            int j;
+ 
+            printf("'%s' returned by %s. Thank you!\n",
+                   issuedBooks[i].bookName, issuedBooks[i].studentName);
+ 
+            /* move every record after this one back by one position */
             for (j = i; j < totalIssued - 1; j++) {
                 issuedBooks[j] = issuedBooks[j + 1];
             }
-
+ 
             totalIssued--;
             found = 1;
-
-            printf("Book returned successfully!\n");
             break;
         }
     }
-
+ 
     if (!found) {
-        printf("Book not found.\n");
+        printf("That book is not in the issued list.\n");
     }
 }
-int main(void) {
-    int choice;
-
-    do {
-        printf("\n===== LIBRARY MENU =====\n");
-        printf("1. Issue a book\n");
-        printf("2. Return a book\n");
-        printf("3. Display issued books\n");
-        printf("4. Exit\n");
-        printf("Enter your choice: ");
-        scanf("%d", &choice);
-
-        switch (choice) {
-            case 1: issueBook();           break;
-            case 2: printf("Not built yet.\n"); break;
-            case 3: displayIssuedBooks();  break;
-            case 4: printf("Goodbye!\n");  break;
-            default: printf("Wrong choice!\n");
-        }
-
-    } while (choice != 4);
-
-    return 0;
+ 
+ 
+/* ---------- Display all issued books ---------- */
+ 
+void displayIssuedBooks(void) {
+    int i;
+ 
+    if (totalIssued == 0) {
+        printf("\nNo books are currently issued.\n");
+        return;
+    }
+ 
+    printf("\n--- Currently Issued Books ---\n");
+    printf("%-4s %-6s %-20s %-8s %-16s %-12s\n",
+           "SN", "BOOKID", "BOOK NAME", "MEMBID", "STUDENT", "DATE");
+ 
+    for (i = 0; i < totalIssued; i++) {
+        printf("%-4d %-6d %-20s %-8d %-16s %-12s\n",
+               i + 1,
+               issuedBooks[i].bookId,
+               issuedBooks[i].bookName,
+               issuedBooks[i].memberId,
+               issuedBooks[i].studentName,
+               issuedBooks[i].issueDate);
+    }
+ 
+    printf("Total issued: %d\n", totalIssued);
 }
