@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#define MAX_BOOKS 1000
+#define MAX_ISSUED 1000
 struct IssuedBook {
     int  bookId;             /* matches Member 1's book id   */
     char bookName[50];
