@@ -3,7 +3,7 @@
 #include <string.h>
 #include "library.h"
 
-/* ---- shared in-memory tables ---- */
+
 Book books[MAX_RECORDS];
 int bookCount = 0;
 
@@ -13,7 +13,7 @@ int memberCount = 0;
 IssuedBook issued[MAX_RECORDS];
 int issuedCount = 0;
 
-/* ---- input helper ---- */
+
 void readLine(char *buffer, int size) {
     if (fgets(buffer, size, stdin) != NULL) {
         size_t len = strlen(buffer);
@@ -25,7 +25,7 @@ void readLine(char *buffer, int size) {
     }
 }
 
-/* ---- books ---- */
+
 void save_books(void) {
     FILE *fp = fopen("books.dat", "wb");
     if (fp == NULL) {
@@ -51,7 +51,7 @@ void load_books(void) {
     fclose(fp);
 }
 
-/* ---- members ---- */
+
 void save_members(void) {
     FILE *fp = fopen("members.dat", "wb");
     if (fp == NULL) {
@@ -103,7 +103,7 @@ void load_issued(void) {
     fclose(fp);
 }
 
-/* ---- misc utilities ---- */
+
 void pauseScreen(void) {
     printf("\nPress Enter to continue...");
     int c;

@@ -87,7 +87,7 @@ int findMemberIndex(const char *id){
     return -1;
 }
 
-/* ================== BOOKS ================== */
+
 
 void addbook(void){
     if (bookCount >= MAX_RECORDS) {
@@ -186,7 +186,7 @@ void displayallbooks(void){
     }
 }
 
-/* ================== MEMBERS ================== */
+
 
 void addmember(void){
     if (memberCount >= MAX_RECORDS) {
@@ -247,7 +247,6 @@ void displayallmembers(void){
     }
 }
 
-/* ================== ISSUE / RETURN ================== */
 
 void issuebook(void){
     char bookId[MAX_ID_LEN], memberId[MAX_ID_LEN];
@@ -340,7 +339,7 @@ void displayissuedbooks(void){
     }
 }
 
-/* ================== MAIN ================== */
+
 
 int main(void){
     load_books();
