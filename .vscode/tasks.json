@@ -5,7 +5,7 @@
             "label": "build",
             "type": "shell",
             "command": "gcc",
-            "args": ["main.c", "-o", "library.exe"],
+            "args": ["major.c", "file_handling.c", "-o", "library.exe", "-g"],
             "group": {
                 "kind": "build",
                 "isDefault": true

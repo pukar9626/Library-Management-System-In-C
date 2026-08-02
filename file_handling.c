@@ -1,127 +1,135 @@
 #include <stdio.h>
 #include <stdlib.h>
-struct Book {
-    int id;
-    char title[100];
-    char author[100];
-    int isIssued;   
-};
-struct Member {
-    int id;
-    char name[100];
-    char phone[20];
-};
-struct IssuedBook {
-    int bookId;
-    int memberId;
-    char issueDate[11];   
-    char dueDate[11];
-};
-void saveBooks(struct Book books[], int count) {
+#include <string.h>
+#include "library.h"
+
+/* ---- shared in-memory tables ---- */
+Book books[MAX_RECORDS];
+int bookCount = 0;
+
+Member members[MAX_RECORDS];
+int memberCount = 0;
+
+IssuedBook issued[MAX_RECORDS];
+int issuedCount = 0;
+
+/* ---- input helper ---- */
+void readLine(char *buffer, int size) {
+    if (fgets(buffer, size, stdin) != NULL) {
+        size_t len = strlen(buffer);
+        if (len > 0 && buffer[len - 1] == '\n') {
+            buffer[len - 1] = '\0';
+        }
+    } else {
+        buffer[0] = '\0';
+    }
+}
+
+/* ---- books ---- */
+void save_books(void) {
     FILE *fp = fopen("books.dat", "wb");
     if (fp == NULL) {
         printf("Error: could not open file for saving.\n");
         return;
     }
-
-    fwrite(&count, sizeof(int), 1, fp);      
-    fwrite(books, sizeof(struct Book), count, fp);  
-
+    fwrite(&bookCount, sizeof(int), 1, fp);
+    fwrite(books, sizeof(Book), bookCount, fp);
     fclose(fp);
-    printf("Books saved successfully.\n");
 }
-int loadBooks(struct Book books[]) {
+
+void load_books(void) {
     FILE *fp = fopen("books.dat", "rb");
     if (fp == NULL) {
-        printf("No saved books found.\n");
-        return 0;   
+        bookCount = 0;
+        return;
     }
-
-    int count;
-    fread(&count, sizeof(int), 1, fp);       
-    fread(books, sizeof(struct Book), count, fp);  
+    if (fread(&bookCount, sizeof(int), 1, fp) != 1) {
+        bookCount = 0;
+    } else {
+        fread(books, sizeof(Book), bookCount, fp);
+    }
     fclose(fp);
-    printf("Books loaded successfully.\n");
-    return count;   
-}void saveMembers(struct Member members[], int count) {
+}
+
+/* ---- members ---- */
+void save_members(void) {
     FILE *fp = fopen("members.dat", "wb");
     if (fp == NULL) {
         printf("Error: could not open file for saving.\n");
         return;
     }
-
-    fwrite(&count, sizeof(int), 1, fp);
-    fwrite(members, sizeof(struct Member), count, fp);
-
+    fwrite(&memberCount, sizeof(int), 1, fp);
+    fwrite(members, sizeof(Member), memberCount, fp);
     fclose(fp);
-    printf("Members saved successfully.\n");
 }
-int loadMembers(struct Member members[]) {
+
+void load_members(void) {
     FILE *fp = fopen("members.dat", "rb");
     if (fp == NULL) {
-        printf("No saved members found.\n");
-        return 0;
+        memberCount = 0;
+        return;
     }
-
-    int count;
-    fread(&count, sizeof(int), 1, fp);
-    fread(members, sizeof(struct Member), count, fp);
-
+    if (fread(&memberCount, sizeof(int), 1, fp) != 1) {
+        memberCount = 0;
+    } else {
+        fread(members, sizeof(Member), memberCount, fp);
+    }
     fclose(fp);
-    printf("Members loaded successfully.\n");
-    return count;
 }
-void saveIssuedBooks(struct IssuedBook issued[], int count) {
+
+/* ---- issued books ---- */
+void save_issued(void) {
     FILE *fp = fopen("issued.dat", "wb");
     if (fp == NULL) {
         printf("Error: could not open file for saving.\n");
         return;
     }
-
-    fwrite(&count, sizeof(int), 1, fp);
-    fwrite(issued, sizeof(struct IssuedBook), count, fp);
-
+    fwrite(&issuedCount, sizeof(int), 1, fp);
+    fwrite(issued, sizeof(IssuedBook), issuedCount, fp);
     fclose(fp);
-    printf("Issued books saved successfully.\n");
 }
-int loadIssuedBooks(struct IssuedBook issued[]) {
+
+void load_issued(void) {
     FILE *fp = fopen("issued.dat", "rb");
     if (fp == NULL) {
-        printf("No issued book records found.\n");
-        return 0;
+        issuedCount = 0;
+        return;
     }
-
-    int count;
-    fread(&count, sizeof(int), 1, fp);
-    fread(issued, sizeof(struct IssuedBook), count, fp);
-
+    if (fread(&issuedCount, sizeof(int), 1, fp) != 1) {
+        issuedCount = 0;
+    } else {
+        fread(issued, sizeof(IssuedBook), issuedCount, fp);
+    }
     fclose(fp);
-    printf("Issued books loaded successfully.\n");
-    return count;
 }
-void pauseScreen() {
-    int dummy;
-    printf("\nEnter any number to continue...");
-    scanf("%d", &dummy);
+
+/* ---- misc utilities ---- */
+void pauseScreen(void) {
+    printf("\nPress Enter to continue...");
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF) { }
 }
-void clearScreen() {
+
+void clearScreen(void) {
+#ifdef _WIN32
     system("cls");
+#else
+    system("clear");
+#endif
 }
+
 int getValidInt(int min, int max) {
     int value;
     int result;
-
     do {
         printf("Enter a number between %d and %d: ", min, max);
         result = scanf("%d", &value);
-
+        while (getchar() != '\n') { }
         if (result != 1) {
             printf("Invalid input. Please enter a number.\n");
         } else if (value < min || value > max) {
             printf("Out of range. Try again.\n");
         }
-
     } while (result != 1 || value < min || value > max);
-
     return value;
 }
